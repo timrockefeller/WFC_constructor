@@ -6,7 +6,7 @@ using System.Linq;
 
 /// <summary>
 /// 单个有限大小地图
-/// TODO 6x6
+/// TODO 8x8
 /// </summary>
 public class TilingMap : AbstractMap
 {
