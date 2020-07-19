@@ -7,11 +7,20 @@ using System;
 
 public abstract class AbstractMap
 {
-
+    
     /// <summary>
     /// 随机数生成器
     /// </summary>
     public static System.Random Random;
+
+	public const float BLOCK_SIZE = 2f;
+
+
+	public const int HISTORY_SIZE = 3000;
+	// public readonly RingBuffer<HistoryItem> History;
+    public readonly QueueDictionary<Vector3Int, ModuleSet> RemovalQueue;
+    private HashSet<Slot> workArea;
+    public readonly Queue<Slot> BuildQueue;
 
     private int backtrackBarrier;
 
@@ -22,8 +31,8 @@ public abstract class AbstractMap
 
     public AbstractMap()
     {
-        this.History = new RingBuffer<HistoryItem>(AbstractMap.HISTORY_SIZE);
-        this.History.OnOverflow = item => item.Slot.Forget();
+        // this.History = new RingBuffer<HistoryItem>(AbstractMap.HISTORY_SIZE);
+        // this.History.OnOverflow = item => item.Slot.Forget();
         this.RemovalQueue = new QueueDictionary<Vector3Int, ModuleSet>(() => new ModuleSet());
         this.BuildQueue = new Queue<Slot>();
 
@@ -40,26 +49,26 @@ public abstract class AbstractMap
 
 
 
-    public void Undo(int steps)
-    {
-        while (steps > 0 && this.History.Any())
-        {
-            var item = this.History.Pop();
+    // public void Undo(int steps)
+    // {
+    //     while (steps > 0 && this.History.Any())
+    //     {
+    //         var item = this.History.Pop();
 
-            foreach (var slotAddress in item.RemovedModules.Keys)
-            {
-                this.GetSlot(slotAddress).AddModules(item.RemovedModules[slotAddress]);
-            }
+    //         foreach (var slotAddress in item.RemovedModules.Keys)
+    //         {
+    //             this.GetSlot(slotAddress).AddModules(item.RemovedModules[slotAddress]);
+    //         }
 
-            item.Slot.Module = null;
-            this.NotifySlotCollapseUndone(item.Slot);
-            steps--;
-        }
-        if (this.History.Count == 0)
-        {
-            this.backtrackBarrier = 0;
-        }
-    }
+    //         item.Slot.Module = null;
+    //         this.NotifySlotCollapseUndone(item.Slot);
+    //         steps--;
+    //     }
+    //     if (this.History.Count == 0)
+    //     {
+    //         this.backtrackBarrier = 0;
+    //     }
+    // }
 
     private short[][] createInitialModuleHealth(Module[] modules)
     {
