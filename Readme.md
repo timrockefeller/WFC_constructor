@@ -2,4 +2,4 @@
 
 An experimental project.
 
-See [Document](./Documents/inspires.md)
+See [Inspire](./Documents/inspires.md) and [Document](./Documents/WFCIntro.md)
